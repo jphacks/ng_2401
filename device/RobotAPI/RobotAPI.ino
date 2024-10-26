@@ -13,6 +13,8 @@ BLEServer *pServer = NULL;
 BLECharacteristic *pCharacteristic = NULL;
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
+//  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  
+// 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 
 
 // Servo用
 Servo servoRight;
@@ -42,9 +44,10 @@ class CharacteristicCallbacks: public BLECharacteristicCallbacks {
     Serial.println("onWrite");
     String value = pCharacteristic->getValue();
     if (value.length() > 0) {
+      Serial.print("Received Value: ");
       for (int i = 0; i < value.length(); i++) {
-        Serial.print("Received Value: ");
         Serial.print(value[i], HEX);
+        Serial.print(' ');
       }     
       Serial.println();
     }
