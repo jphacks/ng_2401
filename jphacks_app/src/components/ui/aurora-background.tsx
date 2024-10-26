@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 import React, { ReactNode } from "react";
 import { PlaceholdersAndVanishInput } from "./placeholders-and-vanish-input";
-import { onDisconnected, startScan, writeCharacteristics } from "@/api/ble";
+import { onDisconnect, startScan, writeCharacteristics } from "@/api/ble";
 import { disconnect } from "process";
 // import Header from "../header";
 
@@ -108,13 +108,19 @@ export const AuroraBackgroundDemo = () => {
           onSubmit={onSubmit}
         />
         <div className="flex flex-row">
-          <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" onClick={startScan}>
+          <button 
+            className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" 
+            onClick={startScan}>
             スキャン
           </button>
-          <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" onClick={() => writeCharacteristics(1)}>
+          <button 
+            className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" 
+            onClick={() => writeCharacteristics("ABCDEFGHIJKLMNOPQRST")}>
             送信
           </button>
-          <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" onClick={onDisconnected}>
+          <button 
+            className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" 
+            onClick={onDisconnect}>
             切断
           </button>
         </div>

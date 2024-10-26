@@ -1,17 +1,4 @@
-//ボタン登録 ---------------------------------------------------------
-/*
-const scan = document.getElementById('scanBtn');
-const disconnect = document.getElementById('disConnect');
 
-scan.addEventListener('click', () => {
-    startScan();
-});
-
-disconnect.addEventListener('click', () => {
-    onDisconnected();
-})
-//----------------------------------------------------------------------
-*/
 
 //UUID登録 使うサービスとcharacteristicのUUIDを登録する
 const serviceUUID = '55725ac1-066c-48b5-8700-2d9fb3603c5e';
@@ -53,15 +40,20 @@ export const startScan = async () =>  {
   keyCharacteristic = characteristics[0];
 };
 
-export const writeCharacteristics = (msg: number) => {
+// 送信する値
+//  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  
+// 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 
+export const writeCharacteristics = (msg: string) => {
   keyService.getCharacteristic(CharacteristicUUID)
       .then((characteristic: any) => {
           keyCharacteristic = characteristic;
-          keyCharacteristic.writeValue(new Uint8Array([msg]));
+          const encoder = new TextEncoder();
+          const encodedMsg = encoder.encode(msg);
+          keyCharacteristic.writeValue(encodedMsg);
       })
 };
 
-export const onDisconnected = () => {
+export const onDisconnect = () => {
     console.log('> Bluetooth Device disconnected')
 };
 
