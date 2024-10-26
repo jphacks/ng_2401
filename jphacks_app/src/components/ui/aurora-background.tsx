@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 import React, { ReactNode } from "react";
 import { PlaceholdersAndVanishInput } from "./placeholders-and-vanish-input";
+import { onDisconnected, startScan, writeCharacteristics } from "@/api/ble";
+import { disconnect } from "process";
 // import Header from "../header";
 
 interface AuroraBackgroundProps extends React.HTMLProps<HTMLDivElement> {
@@ -105,6 +107,17 @@ export const AuroraBackgroundDemo = () => {
           onChange={handleChange}
           onSubmit={onSubmit}
         />
+        <div className="flex flex-row">
+          <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" onClick={startScan}>
+            スキャン
+          </button>
+          <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" onClick={() => writeCharacteristics(1)}>
+            送信
+          </button>
+          <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" onClick={onDisconnected}>
+            切断
+          </button>
+        </div>
       </motion.div>
     </AuroraBackground>
   );
