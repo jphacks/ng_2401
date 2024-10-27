@@ -46,7 +46,7 @@ void rotateServo(int code) {
     executeServo(90, 90);
     executeServo(90, 55);
     executeServo(125, 0);
-    executeServo(10, 10);
+    executeServo(170, 10);
     executeServo(0, 55);
     executeServo(135, 60);
     executeServo(90, 90);
@@ -176,6 +176,7 @@ void setup() {
   // 初期値は開いている状態にする
   servoRight.write(initAngle);
   servoLeft.write(initAngle);
+  Serial.println("Servo setuped");
 }
 
 void loop() {
