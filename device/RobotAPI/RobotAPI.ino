@@ -47,7 +47,7 @@ void rotateServo(int code) {
     executeServo(90, 55);
     executeServo(125, 0);
     executeServo(170, 10);
-    executeServo(0, 55);
+    executeServo(180, 55);
     executeServo(135, 60);
     executeServo(90, 90);
   } else if (code == 1) {
