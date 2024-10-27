@@ -82,9 +82,10 @@ class CharacteristicCallbacks: public NimBLECharacteristicCallbacks {
       drawDisplay(value.c_str());
       for (int i = 0; i < value.length(); i++) {
         int hexValue = (int)value[i];
-        Serial.print(hexValue);
+        Serial.print(hexValue - 48);
         Serial.print(' ');
-        rotateServo(hexValue);
+        rotateServo(hexValue - 48);
+        delay(1000);
       }     
       Serial.println();
     }
