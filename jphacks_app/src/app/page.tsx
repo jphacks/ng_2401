@@ -1,7 +1,8 @@
 "use client";
 
 import { AuroraBackgroundDemo } from "@/components/ui/aurora-background";
-import { Meteors } from "@/components/ui/meteors";
+import { MultiStepLoader as Loader, MultiStepLoaderDemo } from "@/components/ui/multi-step-loader";
+import { IconSquareRoundedX } from "@tabler/icons-react"
 
 const Page = () => {
 
@@ -10,6 +11,7 @@ const Page = () => {
     <>
       {/* <Header /> */}
       <AuroraBackgroundDemo />
+      <MultiStepLoaderDemo />
     </>
   );
 };
