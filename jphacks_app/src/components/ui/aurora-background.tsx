@@ -6,8 +6,51 @@ import { PlaceholdersAndVanishInput } from "./placeholders-and-vanish-input";
 import { onDisconnect, writeCharacteristics } from "@/api/ble";
 import { MultiStepLoaderDemo } from "./multi-step-loader";
 import { requestDeviceOnly, connectToDevice } from "@/api/ble";
+import { ButtonsCard } from "../ui/tailwindcss-buttons"
+import reactElementToJSXString from "react-element-to-jsx-string";
+import { toast, Toaster } from "sonner";
 
 // import Header from "../header";
+export function TailwindcssButtons() {
+    const copy = (button: any) => {
+      if (button.code) {
+        copyToClipboard(button.code);
+        return;
+      }
+      let buttonString = reactElementToJSXString(button.component);
+   
+      if (buttonString) {
+        const textToCopy = buttonString;
+        copyToClipboard(textToCopy);
+      }
+    };
+   
+    const copyToClipboard = (text: string) => {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          console.log("Text copied to clipboard:", text);
+          toast.success("Copied to clipboard");
+        })
+        .catch((err) => {
+          console.error("Error copying text to clipboard:", err);
+          toast.error("Error copying to clipboard");
+        });
+    };
+    return (
+      <div className="pb-40 px-4 w-full">
+        <Toaster position="top-center" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full  max-w-7xl mx-auto gap-10">
+          {buttons.map((button, idx) => (
+            <ButtonsCard key={idx} onClick={() => copy(button)}>
+              {button.component}
+            </ButtonsCard>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
 
 interface AuroraBackgroundProps extends React.HTMLProps<HTMLDivElement> {
   children: ReactNode;
@@ -119,22 +162,34 @@ export const AuroraBackgroundDemo = () => {
               onSubmit={onSubmit}
             />
             <div className="flex flex-row sm:mt-20 items-center gap-2">
-              <p>ロボットの接続</p>
-              <button
-                className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2"
+              {/* <p>ロボットの接続</p> */}
+            <button
+                className="px-6 py-2 bg-black text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400"
                 onClick={handleScan} // handleScanを実行
-              >
-                スキャン
-              </button>
-              <button
-                className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2"
+            >
+                Scan
+            </button>
+            <button 
+                className="px-6 py-2 bg-black text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400"
                 onClick={onDisconnect}
-              >
-                切断
-              </button>
+            >
+                Disconnection
+            </button>
             </div>
           </motion.div>
           <MultiStepLoaderDemo loading={loading} setLoading={setLoading} /> {/* loadingとsetLoadingを渡す */}
         </AuroraBackground>
       );
     };
+
+export const buttons = [
+    {
+        name: "Figma",
+        description: "Figma button for your website",
+        component: (
+          <button className="px-6 py-2 bg-black text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400">
+            Figma
+          </button>
+        ),
+      },];
+      
