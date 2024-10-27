@@ -46,7 +46,7 @@ void rotateServo(int code) {
     executeServo(90, 90);
     executeServo(90, 55);
     executeServo(125, 0);
-    executeServo(10, 10);
+    executeServo(170, 10);
     executeServo(0, 55);
     executeServo(135, 60);
     executeServo(90, 90);
@@ -82,9 +82,10 @@ class CharacteristicCallbacks: public NimBLECharacteristicCallbacks {
       drawDisplay(value.c_str());
       for (int i = 0; i < value.length(); i++) {
         int hexValue = (int)value[i];
-        Serial.print(hexValue);
+        Serial.print(hexValue - 48);
         Serial.print(' ');
-        rotateServo(hexValue);
+        rotateServo(hexValue - 48);
+        delay(1000);
       }     
       Serial.println();
     }
@@ -138,14 +139,9 @@ void resetDisplay() {
 
 void setup() {
   Serial.begin(115200);
+  // EPaper初期化
   display.init(115200, true, 2, false);
   drawDisplay("Hello World");
-
-  // サーボセットアップ
-  servoRight.setPeriodHertz(period);
-  servoLeft.setPeriodHertz(period);
-  servoRight.attach(rightPin, minUs, maxUs);
-  servoLeft.attach(leftPin, minUs, maxUs);
 
   NimBLEDevice::init(BLE_DEVICE_NAME);
   pServer = NimBLEDevice::createServer();
@@ -169,10 +165,18 @@ void setup() {
   BLEDevice::startAdvertising();
 
   Serial.println("End Setup");
-  
+
+
+  // サーボセットアップ
+  servoRight.setPeriodHertz(period);
+  servoLeft.setPeriodHertz(period);
+  servoRight.attach(rightPin, minUs, maxUs);
+  servoLeft.attach(leftPin, minUs, maxUs);
+
   // 初期値は開いている状態にする
   servoRight.write(initAngle);
   servoLeft.write(initAngle);
+  Serial.println("Servo setuped");
 }
 
 void loop() {
