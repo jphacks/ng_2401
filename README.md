@@ -70,13 +70,14 @@
 - React.js
 - TypeScript
 - Aceternity UI
-- Arduino
 
 #### デバイス
 
+- 油性ペン
+- 爪楊枝
 - ESP32 (マイコン)
 - SG90 (サーボモータ)
-- E-Paper Module
+- E-Paper Module (電子ペーパー)
 - Ender v2 (3D プリンター)
 
 ### 独自技術
