@@ -3,7 +3,10 @@ import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 import React, { ReactNode, useState } from "react";
 import { PlaceholdersAndVanishInput } from "./placeholders-and-vanish-input";
-import { onDisconnect, startScan, writeCharacteristics } from "@/api/ble";
+import { onDisconnect, writeCharacteristics } from "@/api/ble";
+import { MultiStepLoaderDemo } from "./multi-step-loader";
+import { requestDeviceOnly, connectToDevice } from "@/api/ble";
+
 // import Header from "../header";
 
 interface AuroraBackgroundProps extends React.HTMLProps<HTMLDivElement> {
@@ -31,6 +34,7 @@ interface AuroraBackgroundProps extends React.HTMLProps<HTMLDivElement> {
   };
 
 export const AuroraBackground = ({
+    
   className,
   children,
   showRadialGradient = true,
@@ -77,53 +81,60 @@ export const AuroraBackground = ({
 // Content that was originally in page.tsx
 
 export const AuroraBackgroundDemo = () => {
+    const [loading, setLoading] = useState(false);
 
-  return (
-    <AuroraBackground>
-      <motion.div
-        initial={{ opacity: 0.0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: 0.3,
-          duration: 0.8,
-          ease: "easeInOut",
-        }}
-        className="relative flex flex-col gap-4 items-center justify-center px-4"
-      >
-        {/* <div className="text-3xl md:text-7xl font-bold dark:text-white text-center">
-          XXXX YYYY
-        </div>
-        <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 py-4">
-          created by H-Milk
-        </div> */}
-        {/* <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2"> */}
-          {/* Start */}
-        {/* </button> */}
+    const handleScan = async () => {
+        const deviceSelected = await requestDeviceOnly();
+        if (deviceSelected) {
+          setLoading(true); // デバイス選択後にローディングを開始
+          const connected = await connectToDevice();
+          setLoading(false); // 接続が完了したらローディングを停止
+    
+          if (!connected) {
+            alert("接続に失敗しました。");
+          }
+        } else {
+          alert("デバイスが選択されませんでした。");
+        }
+      };
 
-        <h2 className="mb-10 sm:mb-20 text-xl text-center sm:text-5xl dark:text-white text-black">
-        How are you today?
-        </h2>
-        <PlaceholdersAndVanishInput
-          placeholders={placeholders}
-          onChange={handleChange}
-          onSubmit={onSubmit}
-        />
-        <div className="flex flex-row sm:mt-20 items-center gap-2">
-          <p>
-            ロボットの接続 
-          </p>
-          <button 
-            className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" 
-            onClick={startScan}>
-            スキャン
-          </button>
-          <button 
-            className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" 
-            onClick={onDisconnect}>
-            切断
-          </button>
-        </div>
-      </motion.div>
-    </AuroraBackground>
-  );
-};
+      return (
+        <AuroraBackground>
+          <motion.div
+            initial={{ opacity: 0.0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.3,
+              duration: 0.8,
+              ease: "easeInOut",
+            }}
+            className="relative flex flex-col gap-4 items-center justify-center px-4"
+          >
+            <h2 className="mb-10 sm:mb-20 text-xl text-center sm:text-5xl dark:text-white text-black">
+              How are you today?
+            </h2>
+            <PlaceholdersAndVanishInput
+              placeholders={placeholders}
+              onChange={handleChange}
+              onSubmit={onSubmit}
+            />
+            <div className="flex flex-row sm:mt-20 items-center gap-2">
+              <p>ロボットの接続</p>
+              <button
+                className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2"
+                onClick={handleScan} // handleScanを実行
+              >
+                スキャン
+              </button>
+              <button
+                className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2"
+                onClick={onDisconnect}
+              >
+                切断
+              </button>
+            </div>
+          </motion.div>
+          <MultiStepLoaderDemo loading={loading} setLoading={setLoading} /> {/* loadingとsetLoadingを渡す */}
+        </AuroraBackground>
+      );
+    };

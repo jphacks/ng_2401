@@ -1,58 +1,69 @@
-
-
-//UUID登録 使うサービスとcharacteristicのUUIDを登録する
+// UUID登録 使うサービスとcharacteristicのUUIDを登録する
 const serviceUUID = '55725ac1-066c-48b5-8700-2d9fb3603c5e';
-//デバイスからのデータCharacteristic
+// デバイスからのデータCharacteristic
 const CharacteristicUUID = '69ddb59c-d601-4ea4-ba83-44f679a670ba';
 
 // BLE接続用
-let keyDevice: any;
-let keyService: any;
-let keyCharacteristic: any;
+let keyDevice: BluetoothDevice | null = null;
+let keyService: BluetoothRemoteGATTService | null = null;
+let keyCharacteristic: BluetoothRemoteGATTCharacteristic | null = null;
 
 /**
- * web bluetooth api
- * bluetooth接続機器をスキャンする
+ * デバイスを選択するための関数
  */
-export const startScan = async (): Promise<boolean> => {
-  // 動くのでエラーは無視
+export const requestDeviceOnly = async (): Promise<boolean> => {
   const options: RequestDeviceOptions = {
     acceptAllDevices: true,
     optionalServices: [serviceUUID]
-  }
-  // 動くのでエラーは無視
-  const device = await navigator.bluetooth.requestDevice(options);
-  keyDevice = device;
-
+  };
+  
   try {
-    //接続
-    console.log("device.id    : " + device.id);
-    console.log("device.name  : " + device.name);
-    console.log("device.uuids : " + device.uuids);
-    const server = await device.gatt.connect();
-    
-    // サービスを取得
-    console.log('Getting service...');  
-    const service = await server.getPrimaryService(serviceUUID);
-    keyService = service;
-
-    //Characteristicを取得
-    console.log('Getting Notification Characteristic...');
-    const characteristics = await service.getCharacteristics();
-    keyCharacteristic = characteristics[0];
+    const device = await navigator.bluetooth.requestDevice(options);
+    keyDevice = device;
+    console.log("Device selected:", device.name);
     return true;
   } catch (error) {
-    console.error('Error: ', error);
+    console.error("Error in device selection:", error);
     return false;
   }
 };
 
-// 送信する値
-//  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  
-// 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 
+/**
+ * 選択されたデバイスに接続する関数
+ */
+export const connectToDevice = async (): Promise<boolean> => {
+  if (!keyDevice) return false;
+
+  try {
+    const server = await keyDevice.gatt.connect();
+    const service = await server.getPrimaryService(serviceUUID);
+    keyService = service;
+
+    const characteristics = await service.getCharacteristics();
+    keyCharacteristic = characteristics[0];
+    console.log("Connected and service/characteristic acquired.");
+    return true;
+  } catch (error) {
+    console.error("Error in connection:", error);
+    return false;
+  }
+};
+
+/**
+ * メッセージを送信するための関数
+ * 
+ * @param msg - 送信する文字列
+ */
 export const writeCharacteristics = async (msg: string) => {
+  if (!keyCharacteristic) {
+    console.error("Characteristic not found.");
+    alert("送信に失敗しました");
+    return;
+  }
+
   const encoder = new TextEncoder();
   const encodedMsg = encoder.encode(msg);
+
   try {
     await keyCharacteristic.writeValue(encodedMsg);
     alert("送信しました");
@@ -62,13 +73,18 @@ export const writeCharacteristics = async (msg: string) => {
   }
 };
 
+/**
+ * デバイスの接続を切断する関数
+ */
 export const onDisconnect = async (): Promise<boolean> => {
+  if (!keyDevice || !keyDevice.gatt) return false;
+
   try {
-    await keyDevice.gatt.disconnect();
+    keyDevice.gatt.disconnect();
+    console.log("Device disconnected.");
     return true;
   } catch (error) {
     console.error('Error: ', error);
     return false;
   }
 };
-
