@@ -1,4 +1,5 @@
 # レオナルド・ダ・ふっきん
+![PXL_20241027_075719533](https://github.com/user-attachments/assets/46ff23e3-f1db-4f17-b369-128bd93d4ac2)
 
 [![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2024/07/JPHACKS2024_ogp.jpg)](https://www.youtube.com/watch?v=DZXUkEj-CSI)
 
