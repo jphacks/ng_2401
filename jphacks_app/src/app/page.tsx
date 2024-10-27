@@ -11,7 +11,7 @@ const Page = () => {
     <>
       {/* <Header /> */}
       <AuroraBackgroundDemo />
-      <MultiStepLoaderDemo />
+      
     </>
   );
 };
