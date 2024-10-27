@@ -139,14 +139,9 @@ void resetDisplay() {
 
 void setup() {
   Serial.begin(115200);
+  // EPaper初期化
   display.init(115200, true, 2, false);
   drawDisplay("Hello World");
-
-  // サーボセットアップ
-  servoRight.setPeriodHertz(period);
-  servoLeft.setPeriodHertz(period);
-  servoRight.attach(rightPin, minUs, maxUs);
-  servoLeft.attach(leftPin, minUs, maxUs);
 
   NimBLEDevice::init(BLE_DEVICE_NAME);
   pServer = NimBLEDevice::createServer();
@@ -170,7 +165,14 @@ void setup() {
   BLEDevice::startAdvertising();
 
   Serial.println("End Setup");
-  
+
+
+  // サーボセットアップ
+  servoRight.setPeriodHertz(period);
+  servoLeft.setPeriodHertz(period);
+  servoRight.attach(rightPin, minUs, maxUs);
+  servoLeft.attach(leftPin, minUs, maxUs);
+
   // 初期値は開いている状態にする
   servoRight.write(initAngle);
   servoLeft.write(initAngle);
