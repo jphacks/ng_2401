@@ -1,18 +1,18 @@
 "use client";
 import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { PlaceholdersAndVanishInput } from "./placeholders-and-vanish-input";
 import { onDisconnect, startScan, writeCharacteristics } from "@/api/ble";
-import { disconnect } from "process";
 // import Header from "../header";
 
 interface AuroraBackgroundProps extends React.HTMLProps<HTMLDivElement> {
   children: ReactNode;
   showRadialGradient?: boolean;
 }
+  var inputText = "";
 
-const placeholders = [
+  const placeholders = [
     "I'm good meet you!",
     "What's good?",
     "Have a nice day!",
@@ -21,12 +21,13 @@ const placeholders = [
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
+    inputText = e.target.value;
   };
   
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submitted");
+    console.log(inputText);
+    writeCharacteristics(inputText);
   };
 
 export const AuroraBackground = ({
@@ -76,8 +77,8 @@ export const AuroraBackground = ({
 // Content that was originally in page.tsx
 
 export const AuroraBackgroundDemo = () => {
+
   return (
-    
     <AuroraBackground>
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
@@ -107,16 +108,14 @@ export const AuroraBackgroundDemo = () => {
           onChange={handleChange}
           onSubmit={onSubmit}
         />
-        <div className="flex flex-row">
+        <div className="flex flex-row sm:mt-20 items-center gap-2">
+          <p>
+            ロボットの接続 
+          </p>
           <button 
             className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" 
             onClick={startScan}>
             スキャン
-          </button>
-          <button 
-            className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" 
-            onClick={() => writeCharacteristics("ABCDEFGHIJKLMNOPQRST")}>
-            送信
           </button>
           <button 
             className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2" 
