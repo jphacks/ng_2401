@@ -6,12 +6,12 @@
 
 // Epaper
 // ESP32の接続はこちら SS=5,SCL(SCK)=18,SDA(MOSI)=23,BUSY=15,RST=2,DC=19
-GxEPD2_BW<GxEPD2_213_BN, GxEPD2_213_BN::HEIGHT> display(GxEPD2_213_BN(/*CS=5*/ SS, /*DC=*/ 17, /*RST=*/ 16, /*BUSY=*/ 4)); // DEPG0213BN 122x250, SSD1680, TTGO T5 V2.4.1, V2.3.1
+GxEPD2_BW<GxEPD2_213_BN, GxEPD2_213_BN::HEIGHT> display(GxEPD2_213_BN(/*CS=5*/ SS, /*DC=*/17, /*RST=*/16, /*BUSY=*/4)); // DEPG0213BN 122x250, SSD1680, TTGO T5 V2.4.1, V2.3.1
 
 // BLE用
-#define SERVICE_UUID        "55725ac1-066c-48b5-8700-2d9fb3603c5e"
+#define SERVICE_UUID "55725ac1-066c-48b5-8700-2d9fb3603c5e"
 #define CHARACTERISTIC_UUID "69ddb59c-d601-4ea4-ba83-44f679a670ba"
-#define BLE_DEVICE_NAME     "WriteRobot"
+#define BLE_DEVICE_NAME "WriteRobot"
 
 NimBLEServer *pServer = NULL;
 NimBLECharacteristic *pCharacteristic = NULL;
@@ -19,8 +19,8 @@ bool deviceConnected = false;
 bool oldDeviceConnected = false;
 
 // Aを初期値として利用する
-//  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  
-// 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 
+//  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T
+// 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60
 
 // Servo用
 Servo servoRight;
@@ -34,15 +34,18 @@ int maxUs = 2450;
 
 int initAngle = 90;
 
-void executeServo(int left, int right) {
+void executeServo(int left, int right)
+{
   servoLeft.write(left);
   servoRight.write(right);
   delay(1000);
 }
 
 // 特定のパターンに沿って実行
-void rotateServo(int code) {
-  if (code == 0) {
+void rotateServo(int code)
+{
+  if (code == 0)
+  {
     executeServo(90, 90);
     executeServo(90, 55);
     executeServo(125, 0);
@@ -50,57 +53,68 @@ void rotateServo(int code) {
     executeServo(180, 55);
     executeServo(135, 60);
     executeServo(90, 90);
-  } else if (code == 1) {
+  }
+  else if (code == 1)
+  {
     executeServo(90, 90);
     executeServo(180, 0);
   }
 }
 
 // BLE Utils
-class ServerCallbacks: public NimBLEServerCallbacks {
-  void onConnect(NimBLEServer *pServer) {
+class ServerCallbacks : public NimBLEServerCallbacks
+{
+  void onConnect(NimBLEServer *pServer)
+  {
     deviceConnected = true;
     drawDisplay("Connect");
     servoLeft.write(110);
     servoRight.write(70);
     Serial.println("onConnect");
   };
-  void onDisconnect(NimBLEServer *pServer) {
+  void onDisconnect(NimBLEServer *pServer)
+  {
     deviceConnected = false;
     drawDisplay("Disconnect");
     Serial.println("onDisconnect");
   };
 };
 
-class CharacteristicCallbacks: public NimBLECharacteristicCallbacks {
+class CharacteristicCallbacks : public NimBLECharacteristicCallbacks
+{
   // Writeされた時
-  void onWrite(NimBLECharacteristic *pCharacteristic) {
+  void onWrite(NimBLECharacteristic *pCharacteristic)
+  {
     Serial.println("onWrite");
     String value = pCharacteristic->getValue();
-    if (value.length() > 0) {
+    if (value.length() > 0)
+    {
       Serial.print("Received Value: ");
       drawDisplay(value.c_str());
-      for (int i = 0; i < value.length(); i++) {
+      for (int i = 0; i < value.length(); i++)
+      {
         int hexValue = (int)value[i];
         Serial.print(hexValue - 48);
         Serial.print(' ');
         rotateServo(hexValue - 48);
         delay(1000);
-      }     
+      }
       Serial.println();
     }
   }
 };
 
 // Epaper
-void drawDisplay(const char* message) {
-  //Serial.println("helloWorld");
+void drawDisplay(const char *message)
+{
+  // Serial.println("helloWorld");
   display.setRotation(1);
   display.setFont(&FreeMonoBold9pt7b);
   display.setTextColor(GxEPD_WHITE);
 
-  const char* name = "Leonardo da Hukkin";
-  int16_t tbx, tby; uint16_t tbw, tbh;
+  const char *name = "Leonardo da Hukkin";
+  int16_t tbx, tby;
+  uint16_t tbw, tbh;
   display.getTextBounds(name, 0, 0, &tbx, &tby, &tbw, &tbh);
   // center bounding box by transposition of origin:
   uint16_t x = ((display.width() - tbw) / 2) - tbx;
@@ -122,7 +136,8 @@ void drawDisplay(const char* message) {
   display.display(false); // full update
 }
 
-void resetDisplay() {
+void resetDisplay()
+{
   display.setRotation(1);
   display.setFont(&FreeMonoBold9pt7b);
   display.setTextColor(GxEPD_BLACK);
@@ -130,14 +145,16 @@ void resetDisplay() {
   // おそらくディスプレイを初期化してるけどあんまよくわからん
   display.setFullWindow();
   display.firstPage();
-  do {
+  do
+  {
     // スクリーン白紙
     display.fillScreen(GxEPD_WHITE);
-  }  // nextPageは存在しないがないと動かない
+  } // nextPageは存在しないがないと動かない
   while (display.nextPage());
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   // EPaper初期化
   display.init(115200, true, 2, false);
@@ -150,10 +167,8 @@ void setup() {
   NimBLEService *pService = pServer->createService(SERVICE_UUID);
 
   pCharacteristic = pService->createCharacteristic(
-    CHARACTERISTIC_UUID,
-    NIMBLE_PROPERTY::WRITE  |
-    NIMBLE_PROPERTY::NOTIFY
-  );
+      CHARACTERISTIC_UUID,
+      NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::NOTIFY);
 
   pCharacteristic->setCallbacks(new CharacteristicCallbacks());
   pService->start();
@@ -165,7 +180,6 @@ void setup() {
   BLEDevice::startAdvertising();
 
   Serial.println("End Setup");
-
 
   // サーボセットアップ
   servoRight.setPeriodHertz(period);
@@ -179,16 +193,19 @@ void setup() {
   Serial.println("Servo setuped");
 }
 
-void loop() {
+void loop()
+{
   // disconnecting
-  if(!deviceConnected && oldDeviceConnected){
+  if (!deviceConnected && oldDeviceConnected)
+  {
     delay(500); // give the bluetooth stack the chance to get things ready
     pServer->startAdvertising();
     Serial.println("restartAdvertising");
     oldDeviceConnected = deviceConnected;
   }
   // connecting
-  if(deviceConnected && !oldDeviceConnected){
+  if (deviceConnected && !oldDeviceConnected)
+  {
     oldDeviceConnected = deviceConnected;
   }
 }

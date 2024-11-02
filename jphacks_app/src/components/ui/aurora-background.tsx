@@ -154,7 +154,7 @@ export const AuroraBackgroundDemo = () => {
             className="relative flex flex-col gap-4 items-center justify-center px-4"
           >
             <h2 className="mb-10 sm:mb-20 text-xl text-center sm:text-5xl dark:text-white text-black">
-              How are you today?
+              What robots write?
             </h2>
             <PlaceholdersAndVanishInput
               placeholders={placeholders}
